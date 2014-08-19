@@ -135,7 +135,6 @@
         throw new Error();
       }
       catch (err) {
-        console.log(scripts[0])
         // NOTE: Cannot use `err.sourceURL` or `err.fileName` as they will always be THIS script
         var url = getScriptUrlFromStack(err.stack);
         var script = getScriptFromUrl(url);
