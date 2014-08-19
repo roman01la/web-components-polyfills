@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Test</title>
+
+  <link rel="import" href="./components/test1.html">
+<!--   <link rel="import" href="/components/test2.html">
+  <link rel="import" href="/components/test3.html">
+ --></head>
+<body>
+
+  <test-element-one></test-element-one>
+
+  <script src="../src/document.currentScript.js"></script>
+  <script src="../src/shadow-dom.js"></script>
+  <script src="../src/document.registerElement.js"></script>
+  <script src="../src/html-imports.js"></script>
+
+  <script>
+
+    console.success = function (msg) { console.log('%c %s', 'color: green', msg); };
+    console.fail = function (msg) { console.log('%c %s', 'color: red', msg); };
+
+    var importLink = document.querySelector('link[rel="import"]');
+
+    var importNative = false;
+
+    if ('import' in document.createElement('link')) {
+      importNative = true;
+      console.success('HTML Imports is natively supported.');
+      testShadowRoot();
+    }
+
+    importLink.onload = function() {
+
+      if ( !('import' in document.createElement('link')) ) {
+        console.success('HTML Imports was polyfilled.');
+        setTimeout(testShadowRoot, 1000);
+      }
+
+    };
+
+    function testShadowRoot() {
+
+      var testElementOne = document.querySelector('test-element-one');
+
+      if (testElementOne.shadowRoot) {
+        console.success('ShadowRoot initialized.');
+
+        if (testElementOne.shadowRoot.toString().match(/\[object ShadowRoot\]/)) {
+          console.success('  as ShadowRoot');
+        }
+        else
+        if (testElementOne.shadowRoot.toString().match(/\[object HTMLUnknownElement\]/)) {
+          console.success('  as HTMLElement');
+        }
+        else
+        {
+          return console.fail('  as ' + testElementOne.shadowRoot.toString());
+        }
+      }
+      else
+      {
+        return console.fail('ShadowRoot initialized.');
+      }
+
+      testTemplate.call(testElementOne);
+
+    }
+
+    function testTemplate() {
+
+      if (importNative &&
+          importLink.import.head &&
+          importLink.import.head.querySelector('#template')
+            .content.querySelector('h1.name') &&
+          this.shadowRoot.querySelector('h1.name')) {
+
+        console.success('ShadowDom rendered.');
+      }
+      else
+      if ('HTMLTemplateElement' in window &&
+          !importNative &&
+          importLink.import.body &&
+          importLink.import.body.querySelector('#template')
+            .content.querySelector('h1.name') &&
+          this.shadowRoot.querySelector('h1.name')) {
+
+        console.success('Polyfilled ShadowDom rendered.');
+      }
+      else
+      if (!('HTMLTemplateElement' in window) &&
+          !importNative &&
+          importLink.import.body &&
+          importLink.import.body.querySelector('#template h1.name') &&
+          this.shadowRoot.querySelector('h1.name')) {
+
+        console.success('Polyfilled <template> element and ShadowDom rendered.');
+      }
+      else
+      {
+        console.fail('Polyfilled ShadowDom rendered.');
+      }
+    }
+
+  </script>
+
+</body>
+</html>
