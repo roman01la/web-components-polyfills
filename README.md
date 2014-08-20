@@ -1,6 +1,6 @@
 # Lightweight Web Components polyfills
 
-`build/web-components-polyfills.min.js` lightly polyfills HTML Imports, Shadow DOM, `document.createElement` and `document.currentScript`.
+`build/web-components-polyfills.min.js` lightly polyfills HTML Imports, Shadow DOM (inluding CSS selectors), `document.createElement` and `document.currentScript`.
 
 With this polyfill it is possible to create lightweight and compatible (mobile & IE9+) Web Components according to W3C standards, so the code will run great in both oudated and moder browsers versions.
 
@@ -29,16 +29,53 @@ Include polyfill on the page and import your components using `<link rel="import
 
 Name your component, for example `custom-element`. Create HTML file `custom-element.html`.
 
+### Template
+
 There's a `template` HTML element which stores component's template:
 
 ```
 <template id="template">
+
+  <style>
+
+    /*! my-custom-element */
+    :host { display: block; }
+
+    h1 { color: red; }
+
+  </style>
 
   <h1>Hola!</h1>
 
 </template>
 ```
 
+### Styles
+
+Currently Shadow DOM CSS Polyfill can process only styles inside of `<style>` tag presented within import document.
+
+`/*! custom-element-name */` record is required and should match component's tag name.
+
+`:host` CSS selectors refers to the host element of the shadow root, which is the element placed on parent page.
+Usual CSS selectors applying stylesto elements within shadow root.
+
+This style declaration:
+
+```
+/*! my-custom-element */
+:host { display: block; }
+
+h1 { color: red; }
+```
+
+Will be processed to this one for browsers with lack of Shadow DOM support:
+```
+my-custom-element { display: block; }
+
+my-custom-element h1 { color: red; }
+```
+
+### JavaScript
 In order to use your component on the page you should register and initialize it:
 
 <small>follow comments</small>
@@ -91,6 +128,6 @@ Run `npm install` within repository directory. Make you edits and run `grunt` to
 
 ## To-Do
 
-- Shadow DOM CSS selectors polyfill
+- Better Shadow DOM CSS selectors polyfill
 - Nested HTML imports support
 - Tests

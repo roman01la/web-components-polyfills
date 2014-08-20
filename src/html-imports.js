@@ -1,8 +1,8 @@
-(function() {
+(function (scope) {
 
     if ('import' in document.createElement('link')) { return; }
 
-    [].forEach.call(document.querySelectorAll('link[rel="import"]'), function (importElement) {
+    Array.prototype.forEach.call(document.querySelectorAll('link[rel="import"]'), function (importElement) {
 
         (function() {
 
@@ -18,15 +18,16 @@
                     importEl.import = document.implementation.createHTMLDocument('import');
                     importEl.import.body.innerHTML = xhr.responseText;
 
+                    if (!scope.ShadowDOMCSS.support) { scope.ShadowDOMCSS.shim(importEl); }
+
                     var importScripts = importEl.import.body.querySelectorAll('script');
 
-                    [].forEach.call(importScripts, function (importScript, index) {
+                    Array.prototype.forEach.call(importScripts, function (importScript, index) {
 
                         (function() {
 
-                            var scriptIndex = index;
-
-                            var script = document.createElement('script');
+                            var scriptIndex = index,
+                                script = document.createElement('script');
 
                             script.currentScript = importScript;
                             script.import = importEl.import;
@@ -62,4 +63,4 @@
 
         })();
     });
-})();
+})(window);

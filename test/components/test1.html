@@ -1,0 +1,49 @@
+<template id="template">
+
+  <style>
+    /*! test-element-one */
+    :host {
+      background: grey;
+      border-radius: 10px;
+      padding: 20px;
+      display: block;
+    }
+
+    input.new-name {
+      padding: 4px;
+      font-size: 18px;
+    }
+
+  </style>
+
+  <h1 class="name"></h1>
+  <input type="text" class="new-name">
+
+</template>
+
+<script>
+
+  (function (document) {
+
+    var currentScript = document.currentScript,
+        ownerDocument = currentScript.ownerDocument;
+
+    var TestElementOne = Object.create(HTMLElement.prototype);
+
+    TestElementOne.createdCallback = function() {
+
+      var shadow = this.createShadowRoot();
+
+      var template = ownerDocument.querySelector('#template') ||
+                      currentScript.import.querySelector('#template');
+
+      template.content ?
+      shadow.appendChild(template.content.cloneNode(true)) :
+      shadow.innerHTML = template.innerHTML;
+    };
+
+    document.registerElement('test-element-one', { prototype: TestElementOne });
+
+  })(document);
+
+</script>
