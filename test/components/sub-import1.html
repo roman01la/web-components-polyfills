@@ -1,0 +1,55 @@
+<link rel="import" href="./sub-import2.html">
+
+<template id="template">
+
+  <style>
+
+    /*! parent-element */
+    :host {
+      display: block;
+      border: 1px solid #ccc;
+    }
+
+    h1 {
+      color: red;
+    }
+
+  </style>
+
+  <h1>Imma ur pappa elemente!</h1>
+
+</template>
+
+<script>console.log(window)</script>
+<script>
+
+  (function (document, currentScript, ownerDocument) {
+
+    var ParentElement = Object.create(HTMLElement.prototype);
+
+    ParentElement.createdCallback = function() {
+
+      var shadow = this.createShadowRoot();
+
+      var template = ownerDocument.querySelector('#template') ||
+                      currentScript.import.querySelector('#template');
+
+      template.content ?
+      shadow.appendChild(template.content.cloneNode(true)) :
+      shadow.innerHTML = template.innerHTML;
+
+    };
+
+    document.registerElement('parent-element', { prototype: ParentElement });
+
+  })(document, document.currentScript, document.currentScript.ownerDocument);
+
+</script>
+<script src="//ajax.googleapis.com/ajax/libs/threejs/r67/three.min.js"></script>
+<script>console.log(THREE)</script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>console.log(jQuery)</script>
+
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.22/angular.min.js"></script>
+
+<script>console.log(angular)</script>

@@ -76,6 +76,7 @@ my-custom-element h1 { color: red; }
 ```
 
 ### JavaScript
+
 In order to use your component on the page you should register and initialize it:
 
 <small>follow comments</small>
@@ -119,6 +120,11 @@ In order to use your component on the page you should register and initialize it
 
 </script>
 ```
+
+Polyfill can handle both inline and external scripts defined within import document.
+**The only limitation is do not put external script before component initialization code.**
+
+According to current browsers implementation external JavaScript resources executed within parent document. Thus if your component depends on JS lib (jQuery, etc.), put all dependencies into parent document.
 
 ## Development
 
