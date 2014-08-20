@@ -9,6 +9,7 @@ module.exports = function (grunt) {
         files: {
           'build/web-components-polyfills.min.js': [
             'src/document.currentScript.js',
+            'src/shadow-dom-css.js',
             'src/shadow-dom.js',
             'src/document.registerElement.js',
             'src/html-imports.js'

@@ -1,6 +1,6 @@
 {
   "name": "web-components-polyfills",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Lightweight Web Components polyfills.",
   "main": "web-components-polyfills.js",
   "scripts": {
