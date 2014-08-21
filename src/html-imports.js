@@ -1,66 +1,109 @@
 (function (scope) {
 
+    /* Do not apply polyfill if HTML Imports is supported */
     if ('import' in document.createElement('link')) { return; }
 
-    Array.prototype.forEach.call(document.querySelectorAll('link[rel="import"]'), function (importElement) {
+    /* Process each import */
+    Array.prototype.forEach.call(document.querySelectorAll('link[rel="import"]'), function (importEl) {
 
-        (function() {
+        // var importEl = importElement;
 
-            var importEl = importElement;
+        /* Fetch import */
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', importEl.getAttribute('href') && importEl.getAttribute('href'));
+        xhr.onload = function() {
 
-            var xhr = new XMLHttpRequest();
+            if (xhr.status === 200) {
 
-            xhr.open('GET', importEl.getAttribute('href') && importEl.getAttribute('href'));
-            xhr.onload = function() {
+                /* Create and store document */
+                importEl.import = document.implementation.createHTMLDocument('import');
+                importEl.import.body.innerHTML = xhr.responseText;
 
-                if (xhr.status === 200) {
+                /* Shim Shadow DOM CSS selectors if doesn't supported */
+                if (!scope.ShadowDOMCSS.support) { scope.ShadowDOMCSS.shim(importEl); }
 
-                    importEl.import = document.implementation.createHTMLDocument('import');
-                    importEl.import.body.innerHTML = xhr.responseText;
+                /* Handle JavaScript from import document.
+                 * Load and execute external scripts first, then inline */
+                var importScripts = importEl.import.body.querySelectorAll('script'),
+                    loadingScripts = 0,
+                    inlineScriptsCache = [];
 
-                    if (!scope.ShadowDOMCSS.support) { scope.ShadowDOMCSS.shim(importEl); }
+                Array.prototype.forEach.call(importScripts, function (importScript) {
 
-                    var importScripts = importEl.import.body.querySelectorAll('script');
+                    var scriptSrc = importScript.getAttribute('src');
 
-                    Array.prototype.forEach.call(importScripts, function (importScript, index) {
+                    /* Handle external script */
+                    if (scriptSrc) {
 
-                        (function() {
+                        /* Create execution stack for following inline scripts */
+                        inlineScriptsCache.push([]);
 
-                            var scriptIndex = index,
-                                script = document.createElement('script');
+                        loadingScripts++;
 
-                            script.currentScript = importScript;
-                            script.import = importEl.import;
+                        var script = document.createElement('script');
+                        script.src = scriptSrc;
 
-                            if ('btoa' in window) {
+                        /* As soon as external script loaded,
+                         * execute following stack of inline scripts */
+                        script.onload = function() {
 
-                                script.src = 'data:text/javascript;base64,' +
-                                            btoa(script.currentScript.textContent);
-                            } else {
+                            var callStack = inlineScriptsCache[
+                                    inlineScriptsCache.length - loadingScripts];
 
-                                script.src = 'data:text/javascript;charset=utf-8,' +
-                                            encodeURIComponent(script.currentScript.textContent);
+                            for (var i = 0, ln = callStack.length; i < ln; i++) {
+
+                                handleInlineScript(importEl,
+                                    importScripts, callStack[i]);
                             }
 
-                            script.onload = function() {
+                            loadingScripts--;
+                        };
 
-                                this.parentNode.removeChild(script);
+                        document.head.appendChild(script);
+                    }
 
-                                if (scriptIndex === importScripts.length - 1) {
+                    /* Handle inline script */
+                    else {
 
-                                    importEl.onload && importEl.onload();
-                                }
-                            };
+                        /* Execute script if no external loading */
+                        if (!loadingScripts) {
 
-                            document.head.appendChild(script);
-                        })();
-                    });
+                            handleInlineScript(importEl, importScripts, importScript);
+                        }
 
-                }
-            };
+                        /* Put script into current execution stack */
+                        else {
 
-            xhr.send();
+                            inlineScriptsCache[loadingScripts - 1].push(importScript);
+                        }
+                    }
+                });
 
-        })();
+            }
+        };
+
+        xhr.send();
     });
+
+    function handleInlineScript (importEl, importScripts, importScript) {
+
+        var script = document.createElement('script');
+
+        script.currentScript = importScript;
+        script.import = importEl.import;
+
+        if ('btoa' in window) {
+
+            script.src = 'data:text/javascript;base64,' +
+                        btoa(script.currentScript.textContent);
+        } else {
+
+            script.src = 'data:text/javascript;charset=utf-8,' +
+                        encodeURIComponent(script.currentScript.textContent);
+        }
+
+        script.onload = function() { this.parentNode.removeChild(script); };
+
+        document.head.appendChild(script);
+    }
 })(window);

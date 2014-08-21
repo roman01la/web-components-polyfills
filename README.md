@@ -59,6 +59,8 @@ Currently Shadow DOM CSS Polyfill can process only styles inside of `<style>` ta
 `:host` CSS selectors refers to the host element of the shadow root, which is the element placed on parent page.
 Usual CSS selectors applying stylesto elements within shadow root.
 
+`:host(.wrapper)` refers to the host element with classname `.wrapper`.
+
 This style declaration:
 
 ```
@@ -76,6 +78,7 @@ my-custom-element h1 { color: red; }
 ```
 
 ### JavaScript
+
 In order to use your component on the page you should register and initialize it:
 
 <small>follow comments</small>
@@ -120,14 +123,13 @@ In order to use your component on the page you should register and initialize it
 </script>
 ```
 
+Polyfill can handle both inline and external scripts defined within import document.
+**The only limitation is do not put external script before component initialization code.**
+
+According to current browsers implementation external JavaScript resources executed within parent document. Thus if your component depends on JS lib, put all dependencies into parent document.
+
 ## Development
 
 Make sure you have installed *Node.js* runtime and `grunt-cli` module globally.
 
 Run `npm install` within repository directory. Make you edits and run `grunt` to build minified polyfill runtime.
-
-## To-Do
-
-- Better Shadow DOM CSS selectors polyfill
-- Nested HTML imports support
-- Tests
