@@ -17,11 +17,11 @@
     /* Get styles from template. Depends on <template> element support */
     if ('HTMLTemplateElement' in window) {
 
-        importStyles = importEl.import.body.querySelector('template')
+        importStyles = importEl['import'].body.querySelector('template')
             .content.querySelectorAll('style')
     } else {
 
-        importStyles = importEl.import.body.querySelectorAll('style');
+        importStyles = importEl['import'].body.querySelectorAll('style');
     }
 
     /* Process styles */

@@ -1,0 +1,50 @@
+<template id="template">
+
+  <style>
+
+    /*! child-element */
+    :host {
+      display: block;
+      background: yellow;
+    }
+
+    h1 {
+      color: blue;
+    }
+
+  </style>
+
+  <h3>Imma a child elemente!</h3>
+
+</template>
+
+<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> -->
+
+<script>
+
+  (function (document, currentScript, ownerDocument) {
+
+    var ChildElement = Object.create(HTMLElement.prototype);
+
+    ChildElement.createdCallback = function() {
+
+      var shadow = this.createShadowRoot();
+
+      var template = ownerDocument.querySelector('#template') ||
+                      currentScript.import.querySelector('#template');
+
+      template.content ?
+      shadow.appendChild(template.content.cloneNode(true)) :
+      shadow.innerHTML = template.innerHTML;
+
+    };
+
+    document.registerElement('child-element', { prototype: ChildElement });
+
+  })(document, document.currentScript, document.currentScript.ownerDocument);
+
+</script>
+
+<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>console.log(jQuery)</script> -->
+

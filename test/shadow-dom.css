@@ -1,0 +1,22 @@
+/*! custom-element._wcp */
+
+:host {
+  display: block;
+  background: #fff;
+}
+
+#foo {
+  margin: 0;
+}
+
+.child {
+  box-sizing: border-box;
+}
+
+.bar small h1 {
+  font-style: italic;
+}
+
+span.crap {
+  display: block;
+}

@@ -3,6 +3,8 @@
     /* Do not apply polyfill if HTML Imports is supported */
     if ('import' in document.createElement('link')) { return; }
 
+    var documentHead = document.querySelector('head');
+
     /* Process each import */
     Array.prototype.forEach.call(document.querySelectorAll('link[rel="import"]'), function (importEl) {
 
@@ -11,20 +13,24 @@
         /* Fetch import */
         var xhr = new XMLHttpRequest();
         xhr.open('GET', importEl.getAttribute('href') && importEl.getAttribute('href'));
-        xhr.onload = function() {
+        xhr.onreadystatechange = function() {
 
-            if (xhr.status === 200) {
+            if (xhr.readyState === 4 && xhr.status === 200) {
 
                 /* Create and store document */
-                importEl.import = document.implementation.createHTMLDocument('import');
-                importEl.import.body.innerHTML = xhr.responseText;
+                importEl['import'] = document.createDocumentFragment('import');
+
+                var importBody = document.createElement('body');
+                importEl['import'].appendChild(importBody);
+
+                importBody.innerHTML = xhr.responseText;
 
                 /* Shim Shadow DOM CSS selectors if doesn't supported */
                 if (!scope.ShadowDOMCSS.support) { scope.ShadowDOMCSS.shim(importEl); }
 
                 /* Handle JavaScript from import document.
                  * Load and execute external scripts first, then inline */
-                var importScripts = importEl.import.body.querySelectorAll('script'),
+                var importScripts = importBody.querySelectorAll('script'),
                     loadingScripts = 0,
                     inlineScriptsCache = [];
 
@@ -59,7 +65,7 @@
                             loadingScripts--;
                         };
 
-                        document.head.appendChild(script);
+                        documentHead.appendChild(script);
                     }
 
                     /* Handle inline script */
@@ -90,7 +96,7 @@
         var script = document.createElement('script');
 
         script.currentScript = importScript;
-        script.import = importEl.import;
+        script['import'] = importEl['import'];
 
         if ('btoa' in window) {
 
@@ -98,12 +104,11 @@
                         btoa(script.currentScript.textContent);
         } else {
 
-            script.src = 'data:text/javascript;charset=utf-8,' +
-                        encodeURIComponent(script.currentScript.textContent);
+            script.innerHTML = script.currentScript.innerHTML;
         }
 
         script.onload = function() { this.parentNode.removeChild(script); };
 
-        document.head.appendChild(script);
+        documentHead.appendChild(script);
     }
 })(window);
