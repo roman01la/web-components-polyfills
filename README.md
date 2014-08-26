@@ -1,8 +1,8 @@
 # Lightweight Web Components polyfills
 
-`build/web-components-polyfills.min.js` lightly polyfills HTML Imports, Shadow DOM (inluding CSS selectors), `document.createElement` and `document.currentScript`.
+`build/web-components-polyfills.min.js` lightly polyfills HTML Imports, Shadow DOM (including CSS selectors), `document.createElement` and `document.currentScript`.
 
-With this polyfill it is possible to create lightweight and compatible (mobile & IE9+) Web Components according to W3C standards, so the code will run great in both oudated and moder browsers versions.
+With this polyfill it is possible to create lightweight and compatible (mobile & IE9+) Web Components according to W3C standards, so the code will run great in both outdated and modern browsers versions.
 
 ## Usage
 
@@ -57,9 +57,9 @@ Currently Shadow DOM CSS Polyfill can process only styles inside of `<style>` ta
 `/*! custom-element-name */` record is required and should match component's tag name.
 
 `:host` CSS selectors refers to the host element of the shadow root, which is the element placed on parent page.
-Usual CSS selectors applying stylesto elements within shadow root.
+Usual CSS selectors applying styles to elements within shadow root.
 
-`:host(.wrapper)` refers to the host element with classname `.wrapper`.
+`:host(.wrapper)` refers to the host element with class name `.wrapper`.
 
 This style declaration:
 
