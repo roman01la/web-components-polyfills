@@ -67,12 +67,16 @@ This style declaration:
 /*! my-custom-element */
 :host { display: block; }
 
+:host(.red) { background: #ff0000; }
+
 h1 { color: red; }
 ```
 
 Will be processed to this one for browsers with lack of Shadow DOM support:
 ```
 my-custom-element { display: block; }
+
+my-custom-element.red { background: #ff0000; }
 
 my-custom-element h1 { color: red; }
 ```
@@ -123,7 +127,9 @@ In order to use your component on the page you should register and initialize it
 </script>
 ```
 
-Polyfill can handle both inline and external scripts defined within import document.
+Polyfill can handle both block and external scripts defined within import document.
+
+**For now custom element creation code should be included into imported HTML document as JavaScript block. Polyfill can't register new custom element from within external js file.**
 
 ## Development
 
