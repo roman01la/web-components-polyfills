@@ -1,5 +1,7 @@
 # Lightweight Web Components polyfills
 
+![](https://img.shields.io/badge/maintainer%20needed-!-red.svg)
+
 `build/web-components-polyfills.min.js` lightly polyfills HTML Imports, Shadow DOM (including CSS selectors), `document.createElement` and `document.currentScript`.
 
 With this polyfill it is possible to create lightweight and compatible (mobile & IE9+) Web Components according to W3C standards, so the code will run great in both outdated and modern browsers versions.
